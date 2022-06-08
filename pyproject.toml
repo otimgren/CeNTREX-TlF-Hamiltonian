@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "centrex_TlF_hamiltonian"
+version = "0.1.0"
+description = "Code for calculating the TlF Hamiltonian"
+authors = ["Olivier Grasdijk <jgrasdijk@anl.gov>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.11"
+numpy = "scipy"
+sympy = "^1.10.1"
+scipy = "^1.8.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+
+[[tool.mypy.overrides]]
+module = [
+    "sympy",
+    "sympy.physics.wigner",
+    "sympy.physics.quantum.cg",
+    "scipy",
+]
+ignore_missing_imports = true
