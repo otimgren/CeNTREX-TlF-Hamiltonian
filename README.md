@@ -15,7 +15,7 @@ Consists of two modules:
 ## Installation
 `python -m pip install .`  
 where `.` is the path to the directory. To install directly from `Github` use:  
-`python -m pip install git:https://github.com/ograsdijk/CeNTREX_TlF_Hamiltonian`
+`python -m pip install git+https://github.com/ograsdijk/CeNTREX-TlF-Hamiltonian`
 
 # Description
 ## `states`
