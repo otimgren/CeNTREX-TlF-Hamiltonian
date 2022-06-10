@@ -3,16 +3,18 @@ import numpy as np
 from centrex_TlF_hamiltonian import hamiltonian, states
 
 # generate the hyperfine sublevels in J=0 to J=6
-QN = states.generate_uncoupled_states_ground(Js=np.arange(7))
+QN = states.generate_coupled_states_excited(
+    Js=np.arange(1, 5), Ps=[1], Omegas=[-1, 1]
+)
 
 # generate the X hamiltonian terms
-H = hamiltonian.generate_uncoupled_hamiltonian_X(QN)
+H = hamiltonian.generate_coupled_hamiltonian_B(QN)
 
 # create a function outputting the hamiltonian as a function of E and B
-Hfunc = hamiltonian.generate_uncoupled_hamiltonian_X_function(H)
+Hfunc = hamiltonian.generate_coupled_hamiltonian_B_function(H)
 
 # V/cm
-Ez = np.linspace(0, 50e3, 101)
+Ez = np.linspace(0, 100, 101)
 
 # generate the Hamiltonian for (almost) zero field, add a small field to make states
 # non-degenerate
@@ -25,19 +27,8 @@ QN_states = hamiltonian.matrix_to_states(V, QN)
 # original eigenvectors used in tracking states as energies change order
 V_track = V.copy()
 
-# indices of the J=2, mJ=0 states focused by the lens
-indices_J2_mJ0 = [
-    idx
-    for idx, s in enumerate(QN_states)
-    if s.find_largest_component().J == 2 and s.find_largest_component().mJ == 0
-]
-
-indices_J012 = [
-    idx for idx, s in enumerate(QN_states) if s.find_largest_component().J in [0, 1, 2]
-]
-
 # empty array for storing energies
-energy = np.empty([Ez.size, len(QN)], dtype=np.complex128)
+energy = np.empty([Ez.size, len(QN)], dtype=np.float64)
 
 # iterate over the electric field values
 for idx, Ei in enumerate(Ez):
@@ -49,27 +40,29 @@ for idx, Ei in enumerate(Ez):
     energy[idx, :] = E[indices]
     V_track[:, :] = V[:, indices]
 
-# plot the J=2, mJ=0 Stark curves
+# indices of the J'=1, F1'=1/2, F'=1 states
+indices_J1_F1_32_F_1 = [
+    idx
+    for idx, s in enumerate(QN_states)
+    if s.find_largest_component().J == 1
+    and s.find_largest_component().F == 1
+    and s.find_largest_component().F1 == 1 / 2
+    and s.find_largest_component().Omega == 1
+    and s.find_largest_component().P == 1
+]
+
+
+# plot the J'=1, F1'=1/2, F'=1 Stark curves
 fig, ax = plt.subplots(figsize=(12, 8))
 ax.plot(
     Ez,
-    (energy.real[:, indices_J2_mJ0] - energy.real[:, indices_J2_mJ0][0, 0])
-    / (2 * np.pi * 1e9),
+    (energy.real[:, indices_J1_F1_32_F_1] - energy.real[:, indices_J1_F1_32_F_1][0, 0])
+    / (2 * np.pi * 1e3),
     lw=3,
     color="k",
 )
 ax.set_xlabel("E [V/cm]")
-ax.set_ylabel("Energy [GHz]")
-ax.set_title("|J=2, mJ=0> Stark Curve")
-ax.grid(True)
-
-# plot the J=0,1 and 2 Stark Curves
-fig, ax = plt.subplots(figsize=(12, 8))
-ax.plot(
-    Ez, (energy.real[:, indices_J012]) / (2 * np.pi * 1e9),
-)
-ax.set_xlabel("E [V/cm]")
-ax.set_ylabel("Energy [GHz]")
-ax.set_title("|J=0>, |J=1> and |J=2> Stark Curve")
+ax.set_ylabel("Energy [kHz]")
+ax.set_title("|J'=1, F1'=1/2, F'=1> Stark Curve")
 ax.grid(True)
 plt.show()

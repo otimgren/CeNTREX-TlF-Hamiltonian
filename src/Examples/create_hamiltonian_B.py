@@ -1,12 +1,14 @@
 from centrex_TlF_hamiltonian import states, hamiltonian
 
 # generate the hyperfine sublevels in J=0 and J=1
-QN = states.generate_uncoupled_states_ground(Js=[0, 1])
+QN = states.generate_coupled_states_excited(Js=[0, 1, 2, 3])
 
 # generate a dictionary with X hamiltonian terms
-H = hamiltonian.generate_uncoupled_hamiltonian_X(QN)
+H = hamiltonian.generate_coupled_hamiltonian_B(QN)
 
 # create a function outputting the hamiltonian as a function of E and B
-Hfunc = hamiltonian.generate_uncoupled_hamiltonian_X_function(H)
+Hfunc = hamiltonian.generate_coupled_hamiltonian_B_function(H)
 
-print(Hfunc([0, 0, 0], [0, 0, 0]))
+# print(QN)
+
+# print(Hfunc([0, 0, 0], [0, 0, 0]))
