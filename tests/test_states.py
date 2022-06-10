@@ -149,7 +149,18 @@ def test_state_add():
 
 
 def test_hash():
+    s = states.generate_uncoupled_states_ground(np.arange(0, 15))
+    assert (
+        len([si.__hash__() for si in s]) == np.unique([si.__hash__() for si in s]).size
+    )
     s = states.generate_coupled_states_ground(np.arange(0, 15))
+    assert (
+        len([si.__hash__() for si in s]) == np.unique([si.__hash__() for si in s]).size
+    )
+
+    s = states.generate_coupled_states_excited(
+        np.arange(0, 15), Ps=[-1, 1], Omegas=[-1, 1]
+    )
     assert (
         len([si.__hash__() for si in s]) == np.unique([si.__hash__() for si in s]).size
     )
