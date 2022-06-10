@@ -1,17 +1,19 @@
+from functools import partial
 from dataclasses import dataclass
-from typing import Callable, Sequence, Any, Union
+from typing import Callable, Sequence, Any, Union, List
 
 import numpy as np
 import numpy.typing as npt
 from centrex_TlF_hamiltonian.states import CoupledBasisState, UncoupledBasisState
 
 from . import B_coupled, X_uncoupled
-from .coefficients import B, Coefficients, X
+from .constants import BConstants, HamiltonianConstants, XConstants
 
 __all__ = [
     "Hamiltonian",
     "HamiltonianUncoupledX",
     "HamiltonianCoupledB",
+    "HMatElems",
     "generate_uncoupled_hamiltonian_X",
     "generate_coupled_hamiltonian_B",
     "generate_uncoupled_hamiltonian_X_function",
@@ -24,13 +26,13 @@ def HMatElems(
     QN: Union[
         Sequence[UncoupledBasisState], Sequence[CoupledBasisState], npt.NDArray[Any]
     ],
-    coefficients: Coefficients,
+    constants: HamiltonianConstants,
 ) -> npt.NDArray[np.complex128]:
     result = np.zeros((len(QN), len(QN)), dtype=complex)
     for i, a in enumerate(QN):
         for j in range(i, len(QN)):
             b = QN[j]
-            val = (1 * a) @ H(b, coefficients)
+            val = (1 * a) @ H(b, constants)
             result[i, j] = val
             if i != j:
                 result[j, i] = np.conjugate(val)
@@ -61,6 +63,11 @@ class HamiltonianCoupledB(Hamiltonian):
     H_LD: npt.NDArray[np.complex128]
     H_cp1_Tl: npt.NDArray[np.complex128]
     H_c_Tl: npt.NDArray[np.complex128]
+    HSx: npt.NDArray[np.complex128]
+    HSy: npt.NDArray[np.complex128]
+    HSz: npt.NDArray[np.complex128]
+    HZx: npt.NDArray[np.complex128]
+    HZy: npt.NDArray[np.complex128]
     HZz: npt.NDArray[np.complex128]
 
 
@@ -68,7 +75,7 @@ def generate_uncoupled_hamiltonian_X(
     QN: Union[
         Sequence[UncoupledBasisState], Sequence[CoupledBasisState], npt.NDArray[Any]
     ],
-    coefficients: X = X(),
+    constants: XConstants = XConstants(),
 ) -> HamiltonianUncoupledX:
     """
     Generate the uncoupled X state hamiltonian for the supplied set of
@@ -85,18 +92,19 @@ def generate_uncoupled_hamiltonian_X(
         assert qn.isUncoupled, "supply list with UncoupledBasisStates"
 
     return HamiltonianUncoupledX(
-        HMatElems(X_uncoupled.Hff_alt, QN, coefficients),
-        HMatElems(X_uncoupled.HSx, QN, coefficients),
-        HMatElems(X_uncoupled.HSy, QN, coefficients),
-        HMatElems(X_uncoupled.HSz, QN, coefficients),
-        HMatElems(X_uncoupled.HZx, QN, coefficients),
-        HMatElems(X_uncoupled.HZy, QN, coefficients),
-        HMatElems(X_uncoupled.HZz, QN, coefficients),
+        HMatElems(X_uncoupled.Hff_alt, QN, constants),
+        HMatElems(X_uncoupled.HSx, QN, constants),
+        HMatElems(X_uncoupled.HSy, QN, constants),
+        HMatElems(X_uncoupled.HSz, QN, constants),
+        HMatElems(X_uncoupled.HZx, QN, constants),
+        HMatElems(X_uncoupled.HZy, QN, constants),
+        HMatElems(X_uncoupled.HZz, QN, constants),
     )
 
 
 def generate_coupled_hamiltonian_B(
-    QN: Union[Sequence[CoupledBasisState], npt.NDArray[Any]], coefficients: B = B()
+    QN: Union[Sequence[CoupledBasisState], npt.NDArray[Any]],
+    constants: BConstants = BConstants(),
 ) -> HamiltonianCoupledB:
     """Calculate the coupled B state hamiltonian for the supplied set of
     basis states.
@@ -112,19 +120,28 @@ def generate_coupled_hamiltonian_B(
         assert qn.isCoupled, "supply list withCoupledBasisStates"
 
     return HamiltonianCoupledB(
-        HMatElems(B_coupled.Hrot, QN, coefficients),
-        HMatElems(B_coupled.H_mhf_Tl, QN, coefficients),
-        HMatElems(B_coupled.H_mhf_F, QN, coefficients),
-        HMatElems(B_coupled.H_LD, QN, coefficients),
-        HMatElems(B_coupled.H_cp1_Tl, QN, coefficients),
-        HMatElems(B_coupled.H_c_Tl, QN, coefficients),
-        HMatElems(B_coupled.HZz, QN, coefficients),
+        HMatElems(B_coupled.Hrot, QN, constants),
+        HMatElems(B_coupled.H_mhf_Tl, QN, constants),
+        HMatElems(B_coupled.H_mhf_F, QN, constants),
+        HMatElems(B_coupled.H_LD, QN, constants),
+        HMatElems(B_coupled.H_cp1_Tl, QN, constants),
+        HMatElems(B_coupled.H_c_Tl, QN, constants),
+        HMatElems(B_coupled.HSx, QN, constants),
+        HMatElems(B_coupled.HSy, QN, constants),
+        HMatElems(B_coupled.HSz, QN, constants),
+        HMatElems(B_coupled.HZx, QN, constants),
+        HMatElems(B_coupled.HZy, QN, constants),
+        HMatElems(B_coupled.HZz, QN, constants),
     )
 
 
-def generate_uncoupled_hamiltonian_X_function(H: HamiltonianUncoupledX) -> Callable:
-    ham_func = (
-        lambda E, B: 2
+def _uncoupled_ham_func_X(
+    E: Union[List[float], npt.NDArray[np.float64]],
+    B: Union[List[float], npt.NDArray[np.float64]],
+    H: HamiltonianUncoupledX,
+):
+    return (
+        2
         * np.pi
         * (
             H.Hff
@@ -136,12 +153,19 @@ def generate_uncoupled_hamiltonian_X_function(H: HamiltonianUncoupledX) -> Calla
             + B[2] * H.HZz
         )
     )
-    return ham_func
 
 
-def generate_coupled_hamiltonian_B_function(H: HamiltonianCoupledB) -> Callable:
-    ham_func = (
-        lambda E, B: 2
+def generate_uncoupled_hamiltonian_X_function(H: HamiltonianUncoupledX) -> Callable:
+    return partial(_uncoupled_ham_func_X, H=H)
+
+
+def _coupled_ham_func_B(
+    E: Union[List[float], npt.NDArray[np.float64]],
+    B: Union[List[float], npt.NDArray[np.float64]],
+    H: HamiltonianCoupledB,
+):
+    return (
+        2
         * np.pi
         * (
             H.Hrot
@@ -150,7 +174,15 @@ def generate_coupled_hamiltonian_B_function(H: HamiltonianCoupledB) -> Callable:
             + H.H_LD
             + H.H_cp1_Tl
             + H.H_c_Tl
-            + 0.01 * H.HZz
+            + E[0] * H.HSx
+            + E[1] * H.HSy
+            + E[2] * H.HSz
+            + B[0] * H.HZx
+            + B[1] * H.HZy
+            + B[2] * H.HZz
         )
     )
-    return ham_func
+
+
+def generate_coupled_hamiltonian_B_function(H: HamiltonianCoupledB) -> Callable:
+    return partial(_coupled_ham_func_B, H=H)

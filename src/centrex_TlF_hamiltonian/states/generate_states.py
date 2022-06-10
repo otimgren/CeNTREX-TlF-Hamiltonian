@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from itertools import product
-from typing import Any, List, Optional, Sequence, Union, no_type_check
+from typing import Any, List, Optional, Sequence, Union, no_type_check, Tuple
 
 import numpy as np
 import numpy.typing as npt
@@ -20,6 +20,7 @@ __all__ = [
     "generate_uncoupled_states_ground",
     "generate_uncoupled_states_excited",
     "generate_coupled_states_ground",
+    "generate_coupled_states_excited",
     "find_state_idx_from_state",
     "find_exact_states",
     "find_closest_vector_idx",
@@ -99,6 +100,45 @@ def generate_coupled_states_ground(
             for F1 in np.arange(np.abs(J - I_F), J + I_F + 1)
             for F in np.arange(np.abs(F1 - I_Tl), F1 + I_Tl + 1)
             for mF in np.arange(-F, F + 1)
+        ]
+    )
+    return QN
+
+
+def generate_coupled_states_excited(
+    Js: Union[List[int], npt.NDArray[np.int_]],
+    I_Tl: float = 1 / 2,
+    I_F: float = 1 / 2,
+    Ps: Union[int, List[int], Tuple[int]] = 1,
+    Omegas: Union[int, List[int], Tuple[int]] = 1,
+) -> npt.NDArray[Any]:
+    if not isinstance(Ps, (list, tuple)):
+        _Ps = [Ps]
+    else:
+        _Ps = list(Ps)
+    if not isinstance(Omegas, (list, tuple)):
+        _Omegas = [Omegas]
+    else:
+        _Omegas = list(Omegas)
+    QN = np.array(
+        [
+            CoupledBasisState(
+                F,
+                mF,
+                F1,
+                J,
+                I_F,
+                I_Tl,
+                electronic_state=ElectronicState.B,
+                P=P,
+                Omega=Omega,
+            )
+            for J in Js
+            for F1 in np.arange(np.abs(J - I_F), J + I_F + 1)
+            for F in np.arange(np.abs(F1 - I_Tl), F1 + I_Tl + 1)
+            for mF in np.arange(-F, F + 1)
+            for P in _Ps
+            for Omega in _Omegas
         ]
     )
     return QN

@@ -71,13 +71,15 @@ class CoupledBasisState(BasisState):
         self.J = J
         self.I1 = I1
         self.I2 = I2
-        # add Ω for convenience
-        self.Ω = Ω
+
         if Ω is not None:
-            self.Omega: int = Ω
-        else:
+            self.Ω: int = Ω
+            self.Omega = self.Ω
+        elif Omega is not None:
             self.Omega = Omega
-        assert self.Omega is not None, "need to supply either Omega or Ω"
+            self.Ω = self.Omega
+        else:
+            assert self.Omega is not None, "need to supply either Omega or Ω"
         self.P = P
         self.electronic_state = electronic_state
         self.energy = energy

@@ -12,8 +12,8 @@ from . import B_coupled
 from . import wigner
 from .wigner import *
 
-from . import coefficients
-from .coefficients import *
+from . import constants
+from .constants import *
 
 from . import quantum_operators
 from .quantum_operators import *
@@ -30,7 +30,7 @@ from .reduced_hamiltonian import *
 
 __all__ = hamiltonian.__all__.copy()
 __all__ += wigner.__all__.copy()
-__all__ += coefficients.__all__.copy()
+__all__ += constants.__all__.copy()
 __all__ += quantum_operators.__all__.copy()
 __all__ += utils.__all__.copy()
 __all__ += basis_transformations.__all__.copy()

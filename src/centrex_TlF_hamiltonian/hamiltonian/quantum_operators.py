@@ -3,7 +3,7 @@ from functools import lru_cache
 
 import numpy as np
 from centrex_TlF_hamiltonian.states import BasisState, State, UncoupledBasisState
-from .coefficients import Coefficients
+from .constants import HamiltonianConstants
 
 __all__ = [
     "J2",
@@ -192,7 +192,10 @@ def I2y(psi: UncoupledBasisState, *args) -> State:
 
 @lru_cache(maxsize=int(1e6))
 def com(
-    A: Callable, B: Callable, psi: UncoupledBasisState, coefficients: Coefficients
+    A: Callable,
+    B: Callable,
+    psi: UncoupledBasisState,
+    coefficients: HamiltonianConstants,
 ) -> State:
     ABpsi = State()
     # operate with A on all components in B|psi>

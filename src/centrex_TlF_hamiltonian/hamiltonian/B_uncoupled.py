@@ -1,7 +1,7 @@
 import numpy as np
 from centrex_TlF_hamiltonian.states import State, UncoupledBasisState
 
-from .coefficients import B
+from .constants import BConstants
 
 from .wigner import threej_f
 
@@ -13,7 +13,7 @@ __all__ = ["H_LD", "H_c1p", "H_mhf_Tl", "H_mhf_F", "HZx", "HZy", "HZz"]
 ########################################################
 
 
-def H_LD(psi: UncoupledBasisState, coefficients: B) -> State:
+def H_LD(psi: UncoupledBasisState, coefficients: BConstants) -> State:
     J = psi.J
     mJ = psi.mJ
     I1 = psi.I1
@@ -45,7 +45,7 @@ def H_LD(psi: UncoupledBasisState, coefficients: B) -> State:
 ########################################################
 
 
-def H_c1p(psi: UncoupledBasisState, coefficients: B) -> State:
+def H_c1p(psi: UncoupledBasisState, coefficients: BConstants) -> State:
     # Find the quantum numbers of the input state
     J = psi.J
     mJ = psi.mJ
@@ -143,7 +143,7 @@ def H_c1p(psi: UncoupledBasisState, coefficients: B) -> State:
 ########################################################
 
 
-def H_mhf_Tl(psi: UncoupledBasisState, coefficients: B) -> State:
+def H_mhf_Tl(psi: UncoupledBasisState, coefficients: BConstants) -> State:
     # Find the quantum numbers of the input state
     J = psi.J
     mJ = psi.mJ
@@ -201,7 +201,7 @@ def H_mhf_Tl(psi: UncoupledBasisState, coefficients: B) -> State:
     return State(data)
 
 
-def H_mhf_F(psi: UncoupledBasisState, coefficients: B) -> State:
+def H_mhf_F(psi: UncoupledBasisState, coefficients: BConstants) -> State:
     # Find the quantum numbers of the input state
     J = psi.J
     mJ = psi.mJ
@@ -274,7 +274,7 @@ def HZy(psi: UncoupledBasisState) -> State:
     return State([(1.0, psi)])
 
 
-def HZz(psi: UncoupledBasisState, coefficients: B) -> State:
+def HZz(psi: UncoupledBasisState, coefficients: BConstants) -> State:
     # Find the quantum numbers of the input state
     J = psi.J
     mJ = psi.mJ
