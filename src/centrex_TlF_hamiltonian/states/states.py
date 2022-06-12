@@ -19,6 +19,7 @@ __all__ = [
     "CoupledBasisState",
     "UncoupledBasisState",
     "State",
+    "BasisStates_from_State",
 ]
 
 
@@ -79,8 +80,11 @@ class CoupledBasisState(BasisState):
             self.Omega = Omega
             self.Ω = self.Omega
         else:
-            assert self.Omega is not None, "need to supply either Omega or Ω"
-        self.P = P
+            raise AssertionError("need to supply either Omega or Ω")
+        if P is not None:
+            self.P = P
+        else:
+            raise AssertionError("need to supply parity P")
         self.electronic_state = electronic_state
         self.energy = energy
         self.isCoupled = True
@@ -334,7 +338,10 @@ class UncoupledBasisState(BasisState):
         self.I1, self.m1 = I1, m1
         self.I2, self.m2 = I2, m2
         self.Omega = Omega
-        self.P = P
+        if P is not None:
+            self.P = P
+        else:
+            raise AssertionError("need to supply parity P")
         self.electronic_state = electronic_state
         self.isCoupled = False
         self.isUncoupled = True
@@ -887,3 +894,14 @@ class State:
         arg = np.arctan(np.imag(a) / np.real(a))
 
         return self * np.exp(-1j * arg * np.sign(np.imag(a)))
+
+
+def BasisStates_from_State(
+    states: Union[Sequence[State], npt.NDArray[Any]]
+) -> npt.NDArray[Any]:
+    unique = []
+    for state in states:
+        for amp, basisstate in state:
+            if basisstate not in unique:
+                unique.append(basisstate)
+    return np.array(unique)
