@@ -17,6 +17,8 @@ __all__ = [
     "generate_uncoupled_states_excited",
     "generate_coupled_states_ground",
     "generate_coupled_states_excited",
+    "states.generate_coupled_states_ground_X",
+    "states.generate_coupled_states_excited_B",
 ]
 
 
@@ -210,7 +212,7 @@ def generate_coupled_states_base(
     return np.asarray(QN)
 
 
-def generate_coupled_states_ground_X(
+def generate_coupled_states_X(
     qn_selector: Union[QuantumSelector, List[QuantumSelector], npt.NDArray[Any]],
     nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
 ) -> npt.NDArray[Any]:
@@ -248,7 +250,7 @@ def generate_coupled_states_ground_X(
         )
 
 
-def generate_coupled_states_excited_B(
+def generate_coupled_states_B(
     qn_selector: Union[QuantumSelector, List[QuantumSelector], npt.NDArray[Any]],
     nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
 ) -> npt.NDArray[Any]:
@@ -265,14 +267,14 @@ def generate_coupled_states_excited_B(
     """
     if isinstance(qn_selector, QuantumSelector):
         qns = copy.copy(qn_selector)
-        qns.Ω = 1
+        qns.Ω = 1 if qns.Ω is None else qns.Ω
         qns.electronic = ElectronicState.B
         return generate_coupled_states_base(qns, nuclear_spins=nuclear_spins)
     elif isinstance(qn_selector, (list, np.ndarray)):
         coupled_states = []
         for qns in qn_selector:
             qns = copy.copy(qns)
-            qns.Ω = 1
+            qns.Ω = 1 if qns.Ω is None else qns.Ω
             qns.electronic = ElectronicState.B
             coupled_states.append(
                 generate_coupled_states_base(qns, nuclear_spins=nuclear_spins)

@@ -8,14 +8,14 @@ from centrex_TlF_hamiltonian.states.constants import TlFNuclearSpins
 from centrex_TlF_hamiltonian.states.find_states import QuantumSelector
 from centrex_TlF_hamiltonian.states.generate_states import (
     generate_coupled_states_ground,
-    generate_coupled_states_ground_X,
+    generate_coupled_states_X,
     generate_uncoupled_states_ground,
 )
 from tqdm import tqdm
 
 # generate the hyperfine sublevels in J=2
 qn_select = QuantumSelector(J=[2])
-QN = generate_coupled_states_ground_X(qn_select)
+QN = generate_coupled_states_X(qn_select)
 
 # generate the transformation matrix
 qn = generate_uncoupled_states_ground(
@@ -59,7 +59,6 @@ for idx, Ei in tqdm(enumerate(Ez), total=len(Ez)):
         transform=transform,
         H_func=Hfunc,
     )
-    # energy[idx, :] = np.diag(H)
     E, V = np.linalg.eigh(H)
 
     # sort indices to keep the state order the same

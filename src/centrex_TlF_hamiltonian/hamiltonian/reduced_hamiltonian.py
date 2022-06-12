@@ -8,7 +8,7 @@ import scipy as sp
 from centrex_TlF_hamiltonian.states.constants import TlFNuclearSpins
 from centrex_TlF_hamiltonian.states.find_states import QuantumSelector
 from centrex_TlF_hamiltonian.states.generate_states import (
-    generate_coupled_states_excited_B,
+    generate_coupled_states_B,
     generate_coupled_states_ground,
 )
 from .constants import BConstants, XConstants
@@ -212,9 +212,7 @@ def generate_reduced_B_hamiltonian(
     _Jmax = max([gs.J for gs in B_states_approx]) + 2 if Jmax is None else Jmax
 
     qn_select = QuantumSelector(J=np.arange(_Jmin, _Jmax + 1), P=[-1, 1], Ω=[-1, 1])
-    QN_B = list(
-        generate_coupled_states_excited_B(qn_select, nuclear_spins=nuclear_spins)
-    )
+    QN_B = list(generate_coupled_states_B(qn_select, nuclear_spins=nuclear_spins))
 
     for qn in B_states_approx:
         assert qn.isCoupled, "supply a Sequence of CoupledBasisStates"
