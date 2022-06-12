@@ -36,18 +36,20 @@ def reorder_evecs(
 
 
 def matrix_to_states(
-    V: npt.NDArray[np.complex128], QN: Sequence[BasisState], E: Optional[List] = None
+    V: npt.NDArray[np.complex_], QN: Sequence[BasisState], E: Optional[List] = None
 ) -> Sequence[State]:
     """Turn a matrix of eigenvectors into a list of state objects
+    QN is in the basis the diagonal Hamiltonian H was formed from corresponding to the
+    eigenvectors V.
 
     Args:
-        V (np.ndarray): array with columns corresponding to eigenvectors
-        QN (list): list of State objects
-        E (list, optional): list of energies corresponding to the states.
+        V (npt.NDArray[np.complex_]): array with columns corresponding to eigenvectors
+        QN (Sequence[BasisState]): list of State objects
+        E (List, optional): list of energies corresponding to the states.
                             Defaults to None.
 
     Returns:
-        list: list of eigenstates expressed as State objects
+        Sequence[State]: list of eigenstates expressed as State objects
     """
     # find dimensions of matrix
     matrix_dimensions = V.shape
@@ -82,33 +84,33 @@ def matrix_to_states(
 
 
 def reduced_basis_hamiltonian(
-    basis_ori: Sequence[State],
-    H_ori: npt.NDArray[np.complex128],
-    basis_red: Sequence[State],
+    basis_original: Sequence[State],
+    H_original: npt.NDArray[np.complex_],
+    basis_reduced: Sequence[State],
 ) -> npt.NDArray[np.complex128]:
     """Generate Hamiltonian for a sub-basis of the original basis
 
     Args:
-        basis_ori (list): list of states of original basis
-        H_ori (np.ndarray): original Hamiltonian
-        basis_red (list): list of states of sub-basis
+        basis_original (Sequence[State],): sequence of states of original basis
+        H_original (npt.NDArray[np.complex_]): original Hamiltonian
+        basis_reduced (Sequence[State]): sequence of states of sub-basis
 
     Returns:
-        np.ndarray: Hamiltonian in sub-basis
+        npt.NDArray[np.complex128]: Hamiltonian in sub-basis
     """
 
     # Determine the indices of each of the reduced basis states
-    index_red = np.zeros(len(basis_red), dtype=int)
-    for i, state_red in enumerate(basis_red):
-        index_red[i] = basis_ori.index(state_red)
+    index_red = np.zeros(len(basis_reduced), dtype=int)
+    for i, state_red in enumerate(basis_reduced):
+        index_red[i] = basis_original.index(state_red)
 
     # Initialize matrix for Hamiltonian in reduced basis
-    H_red = np.zeros((len(basis_red), len(basis_red)), dtype=complex)
+    H_red = np.zeros((len(basis_reduced), len(basis_reduced)), dtype=complex)
 
     # Loop over reduced basis states and pick out the correct matrix elements
     # for the Hamiltonian in the reduced basis
-    for i, state_i in enumerate(basis_red):
-        for j, state_j in enumerate(basis_red):
-            H_red[i, j] = H_ori[index_red[i], index_red[j]]
+    for i, state_i in enumerate(basis_reduced):
+        for j, state_j in enumerate(basis_reduced):
+            H_red[i, j] = H_original[index_red[i], index_red[j]]
 
     return H_red
