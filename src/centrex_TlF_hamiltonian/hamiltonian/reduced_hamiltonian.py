@@ -22,7 +22,7 @@ from centrex_TlF_hamiltonian.states import (
 )
 
 from .basis_transformations import generate_transform_matrix
-from .hamiltonian import (
+from .generate_hamiltonian import (
     generate_uncoupled_hamiltonian_X,
     generate_uncoupled_hamiltonian_X_function,
     generate_coupled_hamiltonian_B,

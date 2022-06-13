@@ -190,8 +190,6 @@ class CoupledBasisState(BasisState):
             P = "+"
         elif self.P == -1:
             P = "-"
-        else:
-            P = None
         Omega = self.Omega
         v = self.v
 
@@ -199,7 +197,7 @@ class CoupledBasisState(BasisState):
 
         if self.electronic_state is not None:
             string = f"{self.electronic_state.name}, {string}"
-        if P is not None:
+        if self.P is not None:
             string = f"{string}, P = {P}"
         if Omega is not None:
             string = f"{string}, Ω = {Omega}"
@@ -438,15 +436,13 @@ class UncoupledBasisState(BasisState):
             P = "+"
         elif self.P == -1:
             P = "-"
-        else:
-            P = None
         Omega = self.Omega
 
         string = f"J = {J}, mJ = {mJ}, I₁ = {I1}, m₁ = {m1}, I₂ = {I2}, m₂ = {m2}"
 
         if self.electronic_state is not None:
             string = f"{self.electronic_state.name}, {string}"
-        if P is not None:
+        if self.P is not None:
             string = f"{string}, P = {P}"
         if Omega is not None:
             string = f"{string}, Ω = {Omega}"
@@ -711,7 +707,7 @@ class State:
             if np.abs(amp) > tol:
                 if probabilities:
                     amp = np.abs(amp) ** 2
-                if np.real(complex(amp)) > 0:
+                if np.real(complex(amp)) > 0:  # type: ignore
                     print("+", end="")
                 string = basis_state.print_quantum_numbers(printing=False)
                 string = "{:.4f}".format(complex(amp)) + " x " + string  # type: ignore

@@ -1,5 +1,5 @@
-from . import hamiltonian
-from .hamiltonian import *
+from . import generate_hamiltonian
+from . generate_hamiltonian import *
 
 from . import X_uncoupled
 
@@ -28,7 +28,7 @@ from . import reduced_hamiltonian
 from .reduced_hamiltonian import *
 
 
-__all__ = hamiltonian.__all__.copy()
+__all__ = generate_hamiltonian.__all__.copy()
 __all__ += wigner.__all__.copy()
 __all__ += constants.__all__.copy()
 __all__ += quantum_operators.__all__.copy()
