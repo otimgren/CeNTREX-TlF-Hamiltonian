@@ -17,8 +17,8 @@ __all__ = [
     "generate_uncoupled_states_excited",
     "generate_coupled_states_ground",
     "generate_coupled_states_excited",
-    "states.generate_coupled_states_ground_X",
-    "states.generate_coupled_states_excited_B",
+    "generate_coupled_states_X",
+    "generate_coupled_states_B",
 ]
 
 

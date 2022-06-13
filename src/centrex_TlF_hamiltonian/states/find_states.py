@@ -187,7 +187,7 @@ def find_exact_states_indices(
     else:
         _V = V
     if V_ref is not None:
-        _, _V = reorder_evecs(_V, np.ones(len(QN)), V_ref)
+        _, _V = reorder_evecs(_V, np.ones(len(QN), dtype=np.complex_), V_ref)
 
     # calculating the overlaps between the state vectors of states_approx in the basis
     # from which H was generated with the eigenvectors of H
@@ -254,11 +254,11 @@ def get_indices_quantumnumbers_base(
         qn_selector, QuantumSelector
     ), "supply a QuantumSelector object to select states"
     if isinstance(QN[0], State):
-        Js = np.array([s.find_largest_component().J for s in QN])
-        F1s = np.array([s.find_largest_component().F1 for s in QN])
-        Fs = np.array([s.find_largest_component().F for s in QN])
-        mFs = np.array([s.find_largest_component().mF for s in QN])
-        estates = np.array([s.find_largest_component().electronic_state for s in QN])
+        Js = np.array([s.largest.J for s in QN])
+        F1s = np.array([s.largest.F1 for s in QN])
+        Fs = np.array([s.largest.F for s in QN])
+        mFs = np.array([s.largest.mF for s in QN])
+        estates = np.array([s.largest.electronic_state for s in QN])
     elif isinstance(QN[0], CoupledBasisState):
         Js = np.array([s.J for s in QN])
         F1s = np.array([s.F1 for s in QN])

@@ -43,9 +43,7 @@ for idx, Bi in enumerate(Bz):
 indices_J1 = [
     idx
     for idx, s in enumerate(QN_states)
-    if s.find_largest_component().J == 1
-    and s.find_largest_component().Omega == 1
-    and s.find_largest_component().P == 1
+    if s.largest.J == 1 and s.largest.Omega == 1 and s.largest.P == 1
 ]
 
 

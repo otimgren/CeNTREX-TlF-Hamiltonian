@@ -1,5 +1,5 @@
 # CeNTREX-TlF-Hamiltonian
-Code writting for the CeNTREX TlF States and Hamiltonians
+Code for generating the CeNTREX TlF States and Hamiltonians
 
 Consists of two modules:
 * `states`
@@ -148,11 +148,11 @@ V_track = V.copy()
 indices_J2_mJ0 = [
     idx
     for idx, s in enumerate(QN_states)
-    if s.find_largest_component().J == 2 and s.find_largest_component().mJ == 0
+    if s.largest.J == 2 and s.largest.mJ == 0
 ]
 
 indices_J012 = [
-    idx for idx, s in enumerate(QN_states) if s.find_largest_component().J in [0, 1, 2]
+    idx for idx, s in enumerate(QN_states) if s.largest.J in [0, 1, 2]
 ]
 
 # empty array for storing energies

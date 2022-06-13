@@ -16,7 +16,7 @@ Ez = np.linspace(0, 50e3, 101)
 
 # generate the Hamiltonian for (almost) zero field, add a small field to make states
 # non-degenerate
-Hi = Hfunc(E=[0., 0., 1e-3], B=[0., 0., 1e-3])
+Hi = Hfunc(E=[0.0, 0.0, 1e-3], B=[0.0, 0.0, 1e-3])
 E, V = np.linalg.eigh(Hi)
 
 # get the true superposition-states of the system
@@ -27,21 +27,17 @@ V_track = V.copy()
 
 # indices of the J=2, mJ=0 states focused by the lens
 indices_J2_mJ0 = [
-    idx
-    for idx, s in enumerate(QN_states)
-    if s.find_largest_component().J == 2 and s.find_largest_component().mJ == 0
+    idx for idx, s in enumerate(QN_states) if s.largest.J == 2 and s.largest.mJ == 0
 ]
 
-indices_J012 = [
-    idx for idx, s in enumerate(QN_states) if s.find_largest_component().J in [0, 1, 2]
-]
+indices_J012 = [idx for idx, s in enumerate(QN_states) if s.largest.J in [0, 1, 2]]
 
 # empty array for storing energies
 energy = np.empty([Ez.size, len(QN)], dtype=np.complex128)
 
 # iterate over the electric field values
 for idx, Ei in enumerate(Ez):
-    Hi = Hfunc(E=[0., 0., Ei], B=[0., 0., 1e-3])
+    Hi = Hfunc(E=[0.0, 0.0, Ei], B=[0.0, 0.0, 1e-3])
     E, V = np.linalg.eigh(Hi)
 
     # sort indices to keep the state order the same

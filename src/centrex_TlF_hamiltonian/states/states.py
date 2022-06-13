@@ -273,7 +273,7 @@ class CoupledBasisState(BasisState):
                 I1,
                 I2,
                 Omega=-1 * Omega,
-                P=None,
+                P=P,
                 electronic_state=electronic_state,
             )
             state_plus = 1 * CoupledBasisState(
@@ -284,7 +284,7 @@ class CoupledBasisState(BasisState):
                 I1,
                 I2,
                 Omega=1 * Omega,
-                P=None,
+                P=P,
                 electronic_state=electronic_state,
             )
 
@@ -521,7 +521,7 @@ class UncoupledBasisState(BasisState):
                 m1,
                 I2,
                 m2,
-                P=None,
+                P=P,
                 Omega=-1 * Omega,
                 electronic_state=electronic_state,
             )
@@ -532,7 +532,7 @@ class UncoupledBasisState(BasisState):
                 m1,
                 I2,
                 m2,
-                P=None,
+                P=P,
                 Omega=Omega,
                 electronic_state=electronic_state,
             )
@@ -587,7 +587,7 @@ class State:
             if only_in_self:
                 data.append((amp1, cpt1))
         # add components that are in other but not in self
-        for amp1, cpt1 in other:
+        for amp1, cpt1 in other.data:
             only_in_other = True
             for amp2, cpt2 in self.data:
                 if cpt2 == cpt1:
@@ -641,10 +641,6 @@ class State:
         self.index -= 1
         return self.data[self.index]
 
-    # def __hash__(self):
-    #     h = tuple(np.abs(a)*s.__hash__() for a,s in self)
-    #     return int(hashlib.md5(json.dumps(h).encode()).hexdigest(),16)
-
     def __eq__(self, other: object) -> bool:
         """
         __eq__ method
@@ -672,7 +668,8 @@ class State:
     def __getitem__(self, i: int) -> Tuple[Union[complex, float, int], BasisState]:
         return self.data[i]
 
-    # this breaks the code, havent figured out why yet
+    # this breaks the code, havent figured out why yet, has something to do with the
+    # __add__ function I think
     # def __len__(self):
     #     return len(self.data)
 
@@ -693,6 +690,10 @@ class State:
             return ""
         else:
             return string
+
+    @property
+    def largest(self) -> BasisState:
+        return self.find_largest_component()
 
     # Some utility functions
     # Function for normalizing states

@@ -3,9 +3,7 @@ import numpy as np
 from centrex_TlF_hamiltonian import hamiltonian, states
 
 # generate the hyperfine sublevels in J=0 to J=6
-QN = states.generate_coupled_states_excited(
-    Js=np.arange(1, 5), Ps=[1], Omegas=[-1, 1]
-)
+QN = states.generate_coupled_states_excited(Js=np.arange(1, 5), Ps=[1], Omegas=[-1, 1])
 
 # generate the X hamiltonian terms
 H = hamiltonian.generate_coupled_hamiltonian_B(QN)
@@ -18,7 +16,7 @@ Ez = np.linspace(0, 100, 101)
 
 # generate the Hamiltonian for (almost) zero field, add a small field to make states
 # non-degenerate
-Hi = Hfunc(E=[0., 0., 1e-3], B=[0., 0., 1e-3])
+Hi = Hfunc(E=[0.0, 0.0, 1e-3], B=[0.0, 0.0, 1e-3])
 E, V = np.linalg.eigh(Hi)
 
 # get the true superposition-states of the system
@@ -32,7 +30,7 @@ energy = np.empty([Ez.size, len(QN)], dtype=np.float64)
 
 # iterate over the electric field values
 for idx, Ei in enumerate(Ez):
-    Hi = Hfunc(E=[0., 0., Ei], B=[0., 0., 1e-3])
+    Hi = Hfunc(E=[0.0, 0.0, Ei], B=[0.0, 0.0, 1e-3])
     E, V = np.linalg.eigh(Hi)
 
     # sort indices to keep the state order the same
@@ -44,11 +42,11 @@ for idx, Ei in enumerate(Ez):
 indices_J1_F1_32_F_1 = [
     idx
     for idx, s in enumerate(QN_states)
-    if s.find_largest_component().J == 1
-    and s.find_largest_component().F == 1
-    and s.find_largest_component().F1 == 1 / 2
-    and s.find_largest_component().Omega == 1
-    and s.find_largest_component().P == 1
+    if s.largest.J == 1
+    and s.largest.F == 1
+    and s.largest.F1 == 1 / 2
+    and s.largest.Omega == 1
+    and s.largest.P == 1
 ]
 
 

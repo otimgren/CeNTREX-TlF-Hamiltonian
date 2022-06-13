@@ -135,11 +135,8 @@ def test_gfactor_B_hamiltonian():
         ids
         for ids, s in enumerate(QN_states)
         for sc in states_to_check
-        if s.find_largest_component() == sc
+        if s.largest == sc
     ]
-
-    # for idx in indices_states:
-    #     print(f"{QN_states[idx].find_largest_component()} -> {gFactors[idx]:.3f} μB")
 
     assert np.allclose(
         gFactors[indices_states],
