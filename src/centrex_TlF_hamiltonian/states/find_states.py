@@ -173,7 +173,7 @@ def find_exact_states_indices(
                                                                 Defaults to None.
 
     Returns:
-        npt.NDArray[np.int_]: _description_
+        npt.NDArray[np.int_]: indices
     """
     # generating the state vectors for states_approx in the basis of QN, which is the
     # basis H was generated from. Note that this is not the actual basis of H, which
