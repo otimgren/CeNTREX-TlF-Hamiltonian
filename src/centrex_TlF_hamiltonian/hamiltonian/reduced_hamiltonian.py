@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Optional, Tuple, Sequence
 
 import numpy as np
 import numpy.typing as npt
-import scipy as sp
+from scipy import linalg
 
 from centrex_TlF_hamiltonian.states.constants import TlFNuclearSpins
 from centrex_TlF_hamiltonian.states.find_states import QuantumSelector
@@ -246,7 +246,7 @@ def compose_reduced_hamiltonian(
     H_X_red[np.abs(H_X_red) < element_limit] = 0
     H_B_red[np.abs(H_B_red) < element_limit] = 0
 
-    H_int: npt.NDArray[np.complex128] = sp.linalg.block_diag(H_X_red, H_B_red)
+    H_int: npt.NDArray[np.complex128] = linalg.block_diag(H_X_red, H_B_red)
     V_ref_int = np.eye(H_int.shape[0], dtype=np.complex128)
 
     return H_int, V_ref_int
