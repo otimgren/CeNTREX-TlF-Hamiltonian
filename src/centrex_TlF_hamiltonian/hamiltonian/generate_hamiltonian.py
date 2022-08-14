@@ -1,12 +1,13 @@
+from ast import Assert
 from functools import partial
 from dataclasses import dataclass
 from typing import Callable, Sequence, Any, Union, List
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian.states import CoupledBasisState, UncoupledBasisState
+from centrex_TlF_hamiltonian.states import CoupledBasisState, UncoupledBasisState, Basis
 
-from . import B_coupled, X_uncoupled
+from . import B_coupled, X_uncoupled, B_coupled_Omega
 from .constants import BConstants, HamiltonianConstants, XConstants
 
 __all__ = [
@@ -56,7 +57,23 @@ class HamiltonianUncoupledX(Hamiltonian):
 
 
 @dataclass
-class HamiltonianCoupledB(Hamiltonian):
+class HamiltonianCoupledBP(Hamiltonian):
+    Hrot: npt.NDArray[np.complex128]
+    H_mhf_Tl: npt.NDArray[np.complex128]
+    H_mhf_F: npt.NDArray[np.complex128]
+    H_LD: npt.NDArray[np.complex128]
+    H_cp1_Tl: npt.NDArray[np.complex128]
+    H_c_Tl: npt.NDArray[np.complex128]
+    HSx: npt.NDArray[np.complex128]
+    HSy: npt.NDArray[np.complex128]
+    HSz: npt.NDArray[np.complex128]
+    HZx: npt.NDArray[np.complex128]
+    HZy: npt.NDArray[np.complex128]
+    HZz: npt.NDArray[np.complex128]
+
+
+@dataclass
+class HamiltonianCoupledBOmega(Hamiltonian):
     Hrot: npt.NDArray[np.complex128]
     H_mhf_Tl: npt.NDArray[np.complex128]
     H_mhf_F: npt.NDArray[np.complex128]
@@ -80,7 +97,6 @@ def generate_uncoupled_hamiltonian_X(
     """
     Generate the uncoupled X state hamiltonian for the supplied set of
     basis states.
-    Retrieved from a pre-calculated sqlite3 database
 
     Args:
         QN (array): array of UncoupledBasisStates
@@ -105,10 +121,9 @@ def generate_uncoupled_hamiltonian_X(
 def generate_coupled_hamiltonian_B(
     QN: Union[Sequence[CoupledBasisState], npt.NDArray[Any]],
     constants: BConstants = BConstants(),
-) -> HamiltonianCoupledB:
+) -> Union[HamiltonianCoupledBP, HamiltonianCoupledBOmega]:
     """Calculate the coupled B state hamiltonian for the supplied set of
     basis states.
-    Retrieved from a pre-calculated sqlite3 database
 
     Args:
         QN (array): array of UncoupledBasisStates
@@ -118,21 +133,38 @@ def generate_coupled_hamiltonian_B(
     """
     for qn in QN:
         assert qn.isCoupled, "supply list withCoupledBasisStates"
-
-    return HamiltonianCoupledB(
-        HMatElems(B_coupled.Hrot, QN, constants),
-        HMatElems(B_coupled.H_mhf_Tl, QN, constants),
-        HMatElems(B_coupled.H_mhf_F, QN, constants),
-        HMatElems(B_coupled.H_LD, QN, constants),
-        HMatElems(B_coupled.H_cp1_Tl, QN, constants),
-        HMatElems(B_coupled.H_c_Tl, QN, constants),
-        HMatElems(B_coupled.HSx, QN, constants),
-        HMatElems(B_coupled.HSy, QN, constants),
-        HMatElems(B_coupled.HSz, QN, constants),
-        HMatElems(B_coupled.HZx, QN, constants),
-        HMatElems(B_coupled.HZy, QN, constants),
-        HMatElems(B_coupled.HZz, QN, constants),
-    )
+    if all([qn.basis == Basis.CoupledP for qn in QN]):
+        return HamiltonianCoupledBP(
+            HMatElems(B_coupled.Hrot, QN, constants),
+            HMatElems(B_coupled.H_mhf_Tl, QN, constants),
+            HMatElems(B_coupled.H_mhf_F, QN, constants),
+            HMatElems(B_coupled.H_LD, QN, constants),
+            HMatElems(B_coupled.H_cp1_Tl, QN, constants),
+            HMatElems(B_coupled.H_c_Tl, QN, constants),
+            HMatElems(B_coupled.HSx, QN, constants),
+            HMatElems(B_coupled.HSy, QN, constants),
+            HMatElems(B_coupled.HSz, QN, constants),
+            HMatElems(B_coupled.HZx, QN, constants),
+            HMatElems(B_coupled.HZy, QN, constants),
+            HMatElems(B_coupled.HZz, QN, constants),
+        )
+    elif all([qn.basis == Basis.CoupledΩ for qn in QN]):
+        return HamiltonianCoupledBOmega(
+            HMatElems(B_coupled_Omega.rotational.Hrot, QN, constants),
+            HMatElems(B_coupled_Omega.mhf.H_mhf_Tl, QN, constants),
+            HMatElems(B_coupled_Omega.mhf.H_mhf_F, QN, constants),
+            HMatElems(B_coupled_Omega.ld.H_LD, QN, constants),
+            HMatElems(B_coupled_Omega.ld.H_cp1_Tl, QN, constants),
+            HMatElems(B_coupled_Omega.nsr.H_c_Tl, QN, constants),
+            HMatElems(B_coupled_Omega.stark.HSx, QN, constants),
+            HMatElems(B_coupled_Omega.stark.HSy, QN, constants),
+            HMatElems(B_coupled_Omega.stark.HSz, QN, constants),
+            HMatElems(B_coupled_Omega.zeeman.HZx, QN, constants),
+            HMatElems(B_coupled_Omega.zeeman.HZy, QN, constants),
+            HMatElems(B_coupled_Omega.zeeman.HZz, QN, constants),
+        )
+    else:
+        raise AssertionError("QN basis not supported")
 
 
 def _uncoupled_ham_func_X(
@@ -162,7 +194,7 @@ def generate_uncoupled_hamiltonian_X_function(H: HamiltonianUncoupledX) -> Calla
 def _coupled_ham_func_B(
     E: Union[List[float], npt.NDArray[np.float64]],
     B: Union[List[float], npt.NDArray[np.float64]],
-    H: HamiltonianCoupledB,
+    H: Union[HamiltonianCoupledBP, HamiltonianCoupledBOmega],
 ):
     return (
         2
@@ -184,5 +216,7 @@ def _coupled_ham_func_B(
     )
 
 
-def generate_coupled_hamiltonian_B_function(H: HamiltonianCoupledB) -> Callable:
+def generate_coupled_hamiltonian_B_function(
+    H: Union[HamiltonianCoupledBP, HamiltonianCoupledBOmega]
+) -> Callable:
     return partial(_coupled_ham_func_B, H=H)

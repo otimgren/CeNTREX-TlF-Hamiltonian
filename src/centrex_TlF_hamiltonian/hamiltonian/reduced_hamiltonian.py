@@ -210,8 +210,11 @@ def generate_reduced_B_hamiltonian(
     # need to generate the other states in case of mixing
     _Jmin = 1 if Jmin is None else Jmin
     _Jmax = max([gs.J for gs in B_states_approx]) + 2 if Jmax is None else Jmax
-
-    qn_select = QuantumSelector(J=np.arange(_Jmin, _Jmax + 1), P=[-1, 1], Ω=[-1, 1])
+    # crude check to see if on Omega basis or P basis
+    if any([qn.P is not None for qn in B_states_approx]):
+        qn_select = QuantumSelector(J=np.arange(_Jmin, _Jmax + 1), P=[-1, 1], Ω=1)
+    else:
+        qn_select = QuantumSelector(J=np.arange(_Jmin, _Jmax + 1), P=None, Ω=[-1, 1])
     QN_B = list(generate_coupled_states_B(qn_select, nuclear_spins=nuclear_spins))
 
     for qn in B_states_approx:

@@ -20,6 +20,7 @@ __all__ = [
     "UncoupledBasisState",
     "State",
     "BasisStates_from_State",
+    "Basis",
 ]
 
 
@@ -28,12 +29,24 @@ class ElectronicState(Enum):
     B = auto()
 
 
+class Basis(Enum):
+    Uncoupled = auto()
+    CoupledP = auto()
+    CoupledΩ = auto()
+
+
+class Parity(Enum):
+    Pos = +1
+    Neg = -1
+
+
 @dataclass
 class BasisState(abc.ABC):
     J: int
     electronic_state: Optional[ElectronicState]
     isCoupled: bool
     isUncoupled: bool
+    basis: Optional[Basis]
 
     # scalar product (psi * a)
     def __mul__(self, a: Union[float, complex, int]) -> State:
@@ -66,6 +79,7 @@ class CoupledBasisState(BasisState):
         energy: Optional[float] = None,
         Ω: Optional[int] = None,
         v: Optional[int] = None,
+        basis: Optional[Basis] = None,
     ):
         self.F, self.mF = F, mF
         self.F1 = F1
@@ -82,13 +96,26 @@ class CoupledBasisState(BasisState):
         else:
             raise AssertionError("need to supply either Omega or Ω")
         if P is not None:
-            self.P = P
+            self.P: Optional[int] = P
         else:
-            raise AssertionError("need to supply parity P")
+            self.P = None
+        #     raise AssertionError("need to supply parity P")
         self.electronic_state = electronic_state
         self.energy = energy
         self.isCoupled = True
         self.isUncoupled = False
+
+        # determine which basis we are in
+        if basis is not None:
+            self.basis = basis
+        elif (self.P is None) and (self.electronic_state == ElectronicState.B):
+            self.basis = Basis.CoupledΩ
+        elif self.electronic_state == ElectronicState.B:
+            self.basis = Basis.CoupledP
+        elif self.electronic_state == ElectronicState.X:
+            self.basis = Basis.CoupledP
+        else:
+            self.basis = None
         self.v = v
 
     # equality testing
@@ -186,10 +213,11 @@ class CoupledBasisState(BasisState):
         J = sp.S(str(self.J), rational=True)
         I1 = sp.S(str(self.I1), rational=True)
         I2 = sp.S(str(self.I2), rational=True)
-        if self.P == 1:
-            P = "+"
-        elif self.P == -1:
-            P = "-"
+        if self.P is not None:
+            if self.P == 1:
+                P = "+"
+            elif self.P == -1:
+                P = "-"
         Omega = self.Omega
         v = self.v
 
@@ -250,7 +278,7 @@ class CoupledBasisState(BasisState):
         return uncoupled_state.normalize()
 
     # Method for transforming parity eigenstate to Omega eigenstate basis
-    def transform_to_omega_basis(self):
+    def transform_to_omega_basis(self) -> State:
         F = self.F
         mF = self.mF
         F1 = self.F1
@@ -261,8 +289,10 @@ class CoupledBasisState(BasisState):
         P = self.P
         Omega = self.Omega
 
+        assert self.basis is not None, "Unknown basis state, can't transform to Ω basis"
+
         # Check that not already in omega basis
-        if P is not None and not electronic_state == ElectronicState.X:
+        if self.basis == Basis.CoupledP and self.electronic_state == ElectronicState.B:
             state_minus = 1 * CoupledBasisState(
                 F,
                 mF,
@@ -271,8 +301,10 @@ class CoupledBasisState(BasisState):
                 I1,
                 I2,
                 Omega=-1 * Omega,
-                P=P,
+                P=None,
                 electronic_state=electronic_state,
+                basis=Basis.CoupledΩ,
+                v=self.v,
             )
             state_plus = 1 * CoupledBasisState(
                 F,
@@ -282,13 +314,29 @@ class CoupledBasisState(BasisState):
                 I1,
                 I2,
                 Omega=1 * Omega,
-                P=P,
+                P=None,
                 electronic_state=electronic_state,
+                basis=Basis.CoupledΩ,
+                v=self.v,
             )
 
             state = 1 / np.sqrt(2) * (state_plus + P * (-1) ** (J) * state_minus)
-        else:
-            state = 1 * self
+        elif (
+            self.basis == Basis.CoupledP and self.electronic_state == ElectronicState.X
+        ):
+            state = 1 * CoupledBasisState(
+                F,
+                mF,
+                F1,
+                J,
+                I1,
+                I2,
+                Omega=Omega,
+                P=None,
+                electronic_state=electronic_state,
+                basis=Basis.CoupledΩ,
+                v=self.v,
+            )
 
         return state
 
@@ -331,6 +379,7 @@ class UncoupledBasisState(BasisState):
         P: Optional[int] = None,
         electronic_state: Optional[ElectronicState] = None,
         energy: Optional[float] = None,
+        basis: Optional[Basis] = None,
     ):
         self.J, self.mJ = J, mJ
         self.I1, self.m1 = I1, m1
@@ -343,6 +392,12 @@ class UncoupledBasisState(BasisState):
         self.electronic_state = electronic_state
         self.isCoupled = False
         self.isUncoupled = True
+
+        if basis is not None:
+            self.basis = basis
+        else:
+            self.basis = Basis.Uncoupled
+
         self.energy = energy
 
     # equality testing
@@ -675,11 +730,11 @@ class State:
         string = ""
         amp_max = np.max(np.abs(list(zip(*ordered))[0]))
         for amp, state in ordered:
-            if np.abs(amp) < amp_max * 1e-2:
+            if np.abs(amp) < amp_max * 1e-3:
                 continue
             string += f"{amp:.2f} x {state}"
             idx += 1
-            if (idx > 4) or (idx == len(ordered.data)):
+            if (idx > 5) or (idx == len(ordered.data)):
                 break
             string += "\n"
         if idx == 0:

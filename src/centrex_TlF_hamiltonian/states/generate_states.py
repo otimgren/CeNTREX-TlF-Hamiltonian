@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import copy
-from typing import Any, List, Tuple, Union
+from typing import Any, List, Tuple, Union, Optional
 
 import numpy as np
 import numpy.typing as npt
 
 from .constants import TlFNuclearSpins
 
-from .states import CoupledBasisState, ElectronicState, UncoupledBasisState
+from .states import CoupledBasisState, ElectronicState, UncoupledBasisState, Basis
 from .utils import parity_X
 from .find_states import QuantumSelector, get_unique_basisstates
 
@@ -41,6 +41,7 @@ def generate_uncoupled_states_ground(
                 Omega=0,
                 P=parity_X(J),
                 electronic_state=ElectronicState.X,
+                basis=Basis.Uncoupled,
             )
             for J in Js
             for mJ in range(-J, J + 1)
@@ -61,7 +62,15 @@ def generate_uncoupled_states_excited(
     QN = np.array(
         [
             UncoupledBasisState(
-                J, mJ, I_Tl, m1, I_F, m2, Omega=Ω, electronic_state=ElectronicState.B
+                J,
+                mJ,
+                I_Tl,
+                m1,
+                I_F,
+                m2,
+                Omega=Ω,
+                electronic_state=ElectronicState.B,
+                basis=Basis.Uncoupled,
             )
             for Ω in Ωs
             for J in Js
@@ -142,7 +151,9 @@ def generate_coupled_states_excited(
 
 
 def generate_coupled_states_base(
-    qn_selector: QuantumSelector, nuclear_spins: TlFNuclearSpins = TlFNuclearSpins()
+    qn_selector: QuantumSelector,
+    nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
+    basis: Optional[Basis] = None,
 ) -> npt.NDArray[Any]:
     """generate CoupledBasisStates for the quantum numbers given by qn_selector
 
@@ -153,7 +164,8 @@ def generate_coupled_states_base(
     Returns:
         np.ndarray: array of CoupledBasisStates for the excited state
     """
-    assert qn_selector.P is not None, "function requires a parity to be set"
+    if (basis is not None) and (basis is not basis.CoupledΩ):
+        assert qn_selector.P is not None, "function requires a parity to be set"
     assert (
         qn_selector.J is not None
     ), "function requires a rotational quantum number to be set"
@@ -207,6 +219,7 @@ def generate_coupled_states_base(
                                         electronic_state=estate,
                                         P=P,
                                         Ω=Ω,
+                                        basis=basis,
                                     )
                                 )
     return np.asarray(QN)
@@ -215,6 +228,7 @@ def generate_coupled_states_base(
 def generate_coupled_states_X(
     qn_selector: Union[QuantumSelector, List[QuantumSelector], npt.NDArray[Any]],
     nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
+    basis: Optional[Basis] = None,
 ) -> npt.NDArray[Any]:
     """generate ground X state CoupledBasisStates for the quantum numbers given
     by qn_selector
@@ -241,7 +255,9 @@ def generate_coupled_states_X(
             qns.P = parity_X
             qns.electronic = ElectronicState.X
             coupled_states.append(
-                generate_coupled_states_base(qns, nuclear_spins=nuclear_spins)
+                generate_coupled_states_base(
+                    qns, nuclear_spins=nuclear_spins, basis=basis
+                )
             )
         return np.asarray(get_unique_basisstates(np.concatenate(coupled_states)))
     else:
@@ -253,6 +269,7 @@ def generate_coupled_states_X(
 def generate_coupled_states_B(
     qn_selector: Union[QuantumSelector, List[QuantumSelector], npt.NDArray[Any]],
     nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
+    basis: Optional[Basis] = None,
 ) -> npt.NDArray[Any]:
     """generate excited B state CoupledBasisStates for the quantum numbers given
     by qn_selector
@@ -277,7 +294,9 @@ def generate_coupled_states_B(
             qns.Ω = 1 if qns.Ω is None else qns.Ω
             qns.electronic = ElectronicState.B
             coupled_states.append(
-                generate_coupled_states_base(qns, nuclear_spins=nuclear_spins)
+                generate_coupled_states_base(
+                    qns, nuclear_spins=nuclear_spins, basis=basis
+                )
             )
         return np.asarray(get_unique_basisstates(np.concatenate(coupled_states)))
     else:
