@@ -13,7 +13,8 @@ from .constants import BConstants, HamiltonianConstants, XConstants
 __all__ = [
     "Hamiltonian",
     "HamiltonianUncoupledX",
-    "HamiltonianCoupledB",
+    "HamiltonianCoupledBP",
+    "HamiltonianCoupledBOmega",
     "HMatElems",
     "generate_uncoupled_hamiltonian_X",
     "generate_coupled_hamiltonian_B",
