@@ -233,6 +233,50 @@ class CoupledBasisState(BasisState):
             string = f"{string}, v = {v}"
         return "|" + string + ">"
 
+    def state_string_custom(self, to_print: List[str]) -> str:
+        F = sp.S(str(self.F), rational=True)
+        mF = sp.S(str(self.mF), rational=True)
+        F1 = sp.S(str(self.F1), rational=True)
+        J = sp.S(str(self.J), rational=True)
+        I1 = sp.S(str(self.I1), rational=True)
+        I2 = sp.S(str(self.I2), rational=True)
+        if self.P is not None:
+            if self.P == 1:
+                P = "+"
+            elif self.P == -1:
+                P = "-"
+        Omega = self.Omega
+        v = self.v
+
+        string = ""
+        for val in to_print:
+            if val == "J":
+                string += f"J = {J}, "
+            elif val == "F1":
+                string += f"F₁ = {F1}, "
+            elif val == "F":
+                string += f"F = {F}, "
+            elif val == "mF":
+                string += f"mF = {mF}, "
+            elif val == "I1":
+                string += f"I₁ = {I1}, "
+            elif val == "I2":
+                string += f"I₂ = {I2}, "
+            elif val == "electronic":
+                if self.electronic_state is not None:
+                    string = f"{self.electronic_state.name}, {string}"
+            elif val == "P":
+                if P is not None:
+                    string += f"P = {P}, "
+            elif val == "Ω":
+                if Omega is not None:
+                    string += f"Ω = {Omega}, "
+            elif val == "v":
+                if v is not None:
+                    string += f"v = {v}, "
+        string = string.strip(", ")
+        return "|" + string + ">"
+
     def print_quantum_numbers(self, printing: bool = False) -> str:
         if printing:
             print(self.state_string())
