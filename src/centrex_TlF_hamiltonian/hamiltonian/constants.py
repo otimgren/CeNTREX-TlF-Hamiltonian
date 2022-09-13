@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-__all__ = ["HamiltonianConstants", "XConstants", "BConstants"]
+import numpy as np
 
+__all__ = ["HamiltonianConstants", "XConstants", "BConstants", "Γ"]
 
-@dataclass
-class HamiltonianConstants:
-    B_rot: float
-
+Γ = 2 * np.pi * 1.56e6
 
 # Values for rotational constant are from "Microwave Spectral tables:
 # Diatomic molecules" by Lovas & Tiemann (1974).
@@ -14,6 +12,11 @@ class HamiltonianConstants:
 
 B_ϵ = 6.689873e9
 α = 45.0843e6
+
+
+@dataclass
+class HamiltonianConstants:
+    B_rot: float
 
 
 @dataclass(unsafe_hash=True)
