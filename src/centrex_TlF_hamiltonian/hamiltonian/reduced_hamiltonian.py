@@ -393,7 +393,7 @@ def generate_reduced_hamiltonian_transitions(
     Bconstants: BConstants = BConstants(),
     nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
 ) -> ReducedHamiltonian:
-    _J_ground: List[List[int]] = []
+    _J_ground: List[int] = []
     excited_states_selectors = []
 
     for transition in transitions:
@@ -420,14 +420,14 @@ def generate_reduced_hamiltonian_transitions(
             Js_excited: npt.NDArray[np.int_] = np.unique(
                 [s.J for es in excited_states for a, s in es]
             )
-            Js_ground = list(np.arange(Js_excited.min() - 1, Js_excited.max() + 2))
+            Js_ground = list(np.arange(Js_excited.min() - 1, Js_excited.max() + 2).astype(int))
             Js_ground = [J for J in Js_ground if (-1) ** J == transition.P_ground]
 
             _J_ground.extend(Js_ground)
             excited_states_selectors.append(excited_states_approx_qn_select)
 
         if isinstance(transition, couplings.MicrowaveTransition):
-            J_ground.extend([transition.J_ground, transition.J_excited])
+            _J_ground.extend([transition.J_ground, transition.J_excited])
 
     # removing duplicates
     J_ground: List[int] = list(np.unique(_J_ground))
