@@ -7,16 +7,17 @@ import numpy as np
 import numpy.typing as npt
 
 from .constants import TlFNuclearSpins
-
+from .find_states import QuantumSelector, get_unique_basisstates
 from .states import CoupledBasisState, ElectronicState, UncoupledBasisState
 from .utils import parity_X
-from .find_states import QuantumSelector, get_unique_basisstates
 
 __all__ = [
     "generate_uncoupled_states_ground",
+    "generate_uncoupled_states_ground_mF0",
     "generate_uncoupled_states_excited",
     "generate_coupled_states_ground",
     "generate_coupled_states_excited",
+    "generate_coupled_states_excited_mF0",
     "generate_coupled_states_X",
     "generate_coupled_states_B",
 ]
@@ -49,6 +50,22 @@ def generate_uncoupled_states_ground(
         ]
     )
     return QN
+
+def generate_uncoupled_states_ground_mF0(
+    Js: Union[List[int], npt.NDArray[np.int_]],
+    nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
+) -> npt.NDArray[Any]:
+    I_Tl = nuclear_spins.I_Tl
+    I_F = nuclear_spins.I_F
+    # convert J to int(J); np.int with (-1)**J throws an exception for negative J
+    QN = []
+    for J in Js:
+        for m1 in np.arange(-I_Tl,I_Tl+1):
+            for m2 in np.arange(-I_F,I_F+1):
+                mJ = 0-m1-m2
+                if np.abs(mJ) <= J:
+                    QN.append(UncoupledBasisState(J,mJ,I_Tl,m1,I_F,m2, electronic_state=ElectronicState.X, P = (-1)**J, Omega = 0))
+    return np.array(QN)
 
 
 def generate_uncoupled_states_excited(
@@ -134,6 +151,44 @@ def generate_coupled_states_excited(
             for F1 in np.arange(np.abs(J - I_F), J + I_F + 1)
             for F in np.arange(np.abs(F1 - I_Tl), F1 + I_Tl + 1)
             for mF in np.arange(-F, F + 1)
+            for P in _Ps
+            for Omega in _Omegas
+        ]
+    )
+    return QN
+
+def generate_coupled_states_excited_mF0(
+    Js: Union[List[int], npt.NDArray[np.int_]],
+    Ps: Union[int, List[int], Tuple[int]] = 1,
+    Omegas: Union[int, List[int], Tuple[int]] = 1,
+    nuclear_spins: TlFNuclearSpins = TlFNuclearSpins(),
+) -> npt.NDArray[Any]:
+    I_Tl = nuclear_spins.I_Tl
+    I_F = nuclear_spins.I_F
+    if not isinstance(Ps, (list, tuple)):
+        _Ps = [Ps]
+    else:
+        _Ps = list(Ps)
+    if not isinstance(Omegas, (list, tuple)):
+        _Omegas = [Omegas]
+    else:
+        _Omegas = list(Omegas)
+    QN = np.array(
+        [
+            CoupledBasisState(
+                F,
+                0,
+                F1,
+                J,
+                I_F,
+                I_Tl,
+                electronic_state=ElectronicState.B,
+                P=P,
+                Omega=Omega,
+            )
+            for J in Js
+            for F1 in np.arange(np.abs(J - I_F), J + I_F + 1)
+            for F in np.arange(np.abs(F1 - I_Tl), F1 + I_Tl + 1)
             for P in _Ps
             for Omega in _Omegas
         ]
