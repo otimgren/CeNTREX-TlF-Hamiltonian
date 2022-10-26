@@ -1,5 +1,5 @@
 from . import generate_hamiltonian
-from . generate_hamiltonian import *
+from .generate_hamiltonian import *
 
 from . import X_uncoupled
 
@@ -8,6 +8,8 @@ from . import B_uncoupled
 from . import general_uncoupled
 
 from . import B_coupled
+
+from . import B_coupled_Omega
 
 from . import wigner
 from .wigner import *
