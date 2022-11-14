@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from centrex_TlF_hamiltonian import hamiltonian, states
+from centrex_tlf_hamiltonian import hamiltonian, states
 
 # generate the hyperfine sublevels in J=0 to J=6
 QN = states.generate_uncoupled_states_ground(Js=np.arange(7))
@@ -61,9 +61,7 @@ ax.grid(True)
 
 # plot the J=0,1 and 2 Stark Curves
 fig, ax = plt.subplots(figsize=(12, 8))
-ax.plot(
-    Ez, (energy.real[:, indices_J012]) / (2 * np.pi * 1e9),
-)
+ax.plot(Ez, (energy.real[:, indices_J012]) / (2 * np.pi * 1e9))
 ax.set_xlabel("E [V/cm]")
 ax.set_ylabel("Energy [GHz]")
 ax.set_title("|J=0>, |J=1> and |J=2> Stark Curve")

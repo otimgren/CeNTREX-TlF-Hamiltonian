@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 import numpy as np
-from centrex_TlF_hamiltonian.states import State, UncoupledBasisState, parity_X
+from centrex_tlf_hamiltonian.states import State, UncoupledBasisState, parity_X
 
 from .constants import XConstants
 from .general_uncoupled import Hrot

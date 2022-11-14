@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from centrex_TlF_hamiltonian import hamiltonian
-from centrex_TlF_hamiltonian.hamiltonian.basis_transformations import (
+from centrex_tlf_hamiltonian import hamiltonian
+from centrex_tlf_hamiltonian.hamiltonian.basis_transformations import (
     generate_transform_matrix,
 )
-from centrex_TlF_hamiltonian.states.constants import TlFNuclearSpins
-from centrex_TlF_hamiltonian.states.find_states import QuantumSelector
-from centrex_TlF_hamiltonian.states.generate_states import (
+from centrex_tlf_hamiltonian.states.constants import TlFNuclearSpins
+from centrex_tlf_hamiltonian.states.find_states import QuantumSelector
+from centrex_tlf_hamiltonian.states.generate_states import (
     generate_coupled_states_ground,
     generate_coupled_states_X,
     generate_uncoupled_states_ground,
@@ -68,9 +68,7 @@ for idx, Ei in tqdm(enumerate(Ez), total=len(Ez)):
 
 # plot the J=2, mJ=0 Stark curves
 fig, ax = plt.subplots(figsize=(12, 8))
-ax.plot(
-    Ez, (energy.real - energy.real[0, 0]) / (2 * np.pi * 1e9), lw=3, color="k",
-)
+ax.plot(Ez, (energy.real - energy.real[0, 0]) / (2 * np.pi * 1e9), lw=3, color="k")
 ax.set_xlabel("E [V/cm]")
 ax.set_ylabel("Energy [GHz]")
 ax.set_title("|J=2> Stark Curve")

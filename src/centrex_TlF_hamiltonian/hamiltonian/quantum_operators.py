@@ -2,7 +2,7 @@ from typing import Callable
 from functools import lru_cache
 
 import numpy as np
-from centrex_TlF_hamiltonian.states import BasisState, State, UncoupledBasisState
+from centrex_tlf_hamiltonian.states import BasisState, State, UncoupledBasisState
 from .constants import HamiltonianConstants
 
 __all__ = [

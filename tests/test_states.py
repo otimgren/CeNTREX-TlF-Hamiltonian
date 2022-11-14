@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 
 
 def test_state_initialization():

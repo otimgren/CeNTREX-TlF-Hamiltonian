@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Sequence, Tuple, Union
 
-from centrex_TlF_hamiltonian.states import MicrowaveTransition, OpticalTransition
+from centrex_tlf_hamiltonian.transitions import MicrowaveTransition, OpticalTransition
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian.states import (
+from centrex_tlf_hamiltonian.states import (
     CoupledBasisState,
     ElectronicState,
     QuantumSelector,
@@ -12,9 +12,9 @@ from centrex_TlF_hamiltonian.states import (
     find_exact_states,
     generate_uncoupled_states_ground,
 )
-from centrex_TlF_hamiltonian.states.constants import TlFNuclearSpins
-from centrex_TlF_hamiltonian.states.find_states import QuantumSelector
-from centrex_TlF_hamiltonian.states.generate_states import (
+from centrex_tlf_hamiltonian.states.constants import TlFNuclearSpins
+from centrex_tlf_hamiltonian.states.find_states import QuantumSelector
+from centrex_tlf_hamiltonian.states.generate_states import (
     generate_coupled_states_B,
     generate_coupled_states_ground,
     generate_coupled_states_X,

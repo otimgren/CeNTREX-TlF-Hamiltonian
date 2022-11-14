@@ -1,13 +1,9 @@
 from functools import lru_cache
 import numpy as np
-from centrex_TlF_hamiltonian.states import CoupledBasisState, State
+from centrex_tlf_hamiltonian.states import CoupledBasisState, State
 
 from .constants import BConstants
-from .quantum_operators import (
-    J2,
-    J4,
-    J6,
-)
+from .quantum_operators import J2, J4, J6
 from .wigner import threej_f, sixj_f
 
 __all__ = [
@@ -515,7 +511,7 @@ def d_p(psi: CoupledBasisState, p: int, constants: BConstants) -> State:
                     I2,
                     Omega=Omega,
                     electronic_state=psi.electronic_state,
-                    P = psi.P
+                    P=psi.P,
                 )
                 if amp != 0:
                     data.append((amp, basis_state))

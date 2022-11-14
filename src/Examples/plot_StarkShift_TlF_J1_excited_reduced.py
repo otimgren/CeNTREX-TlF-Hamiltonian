@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from centrex_TlF_hamiltonian import hamiltonian, states
-from centrex_TlF_hamiltonian.states.generate_states import generate_coupled_states_B
+from centrex_tlf_hamiltonian import hamiltonian, states
+from centrex_tlf_hamiltonian.states.generate_states import generate_coupled_states_B
 from tqdm import tqdm
 
 # generate the hyperfine sublevels in J=1
@@ -35,7 +35,7 @@ energy = np.empty([Ez.size, len(QN)], dtype=np.float64)
 # iterate over the electric field values
 for idx, Ei in tqdm(enumerate(Ez), total=len(Ez)):
     _, H = hamiltonian.generate_reduced_B_hamiltonian(
-        QN, E=[0.0, 0.0, Ei], B=[0.0, 0.0, 1e-3], Jmin=1, Jmax=5, H_func=Hfunc,
+        QN, E=[0.0, 0.0, Ei], B=[0.0, 0.0, 1e-3], Jmin=1, Jmax=5, H_func=Hfunc
     )
     E, V = np.linalg.eigh(H)
 
@@ -46,9 +46,7 @@ for idx, Ei in tqdm(enumerate(Ez), total=len(Ez)):
 
 # plot the J'=2 Stark curves
 fig, ax = plt.subplots(figsize=(12, 8))
-ax.plot(
-    Ez, (energy.real - energy.real[0, 0]) / (2 * np.pi * 1e9), lw=3, color="k",
-)
+ax.plot(Ez, (energy.real - energy.real[0, 0]) / (2 * np.pi * 1e9), lw=3, color="k")
 ax.set_xlabel("E [V/cm]")
 ax.set_ylabel("Energy [GHz]")
 ax.set_title("|J'=1> Stark Curve")

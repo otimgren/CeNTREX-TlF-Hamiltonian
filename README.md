@@ -25,12 +25,12 @@ where `.` is the path to the directory. To install directly from `Github` use:
 Finally `State` is a class representing a collection of states, since in most cases the TlF molecules are in a superposition state.
 
 ```Python
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 states.CoupledBasisState(F=1, mF=0, F1 = 1/2, J = 0, I1 = 1/2, I2 = 1/2, Omega = 0, P = 1)
 ```
 or using some of the functions to generate all hyperfine substates in a given J level: 
 ```Python
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 QN = states.generate_uncoupled_states_ground(Js = [0,1])
 ```
 which returns an array containing the UncoupledBasisStates
@@ -76,7 +76,7 @@ array([ 4,  6,  9, 13], dtype=int64)
 `hamiltonian` contains the functions to generate TlF hamiltonians in the X and B state in either coupled or uncoupled form.  
 Generating a ground state X hamiltonian can be accomplished easily using some convenience functions:
 ```Python
-from centrex_TlF_hamiltonian import states, hamiltonian
+from centrex_tlf_hamiltonian import states, hamiltonian
 
 # generate the hyperfine sublevels in J=0 and J=1
 QN = states.generate_uncoupled_states_ground(Js = [0,1])
@@ -92,7 +92,7 @@ All functions generating hamiltonians only require a list or array of TlF states
 To convert a hamiltonian from one basis to another transformation matrices can be generated or calculated
 (`generate_transform_matrix` pulls non-zero matrix elements from an sqlite database, `calculate_transform_matrix` does the full element wise calculation):
 ```Python
-from centrex_TlF_hamiltonian import states, hamiltonian
+from centrex_tlf_hamiltonian import states, hamiltonian
 
 # generate the hyperfine sublevels in J=0 and J=1
 QN = states.generate_uncoupled_states_ground(Js = [0,1])
@@ -119,7 +119,7 @@ To calculate the energy levels as a function of the electric field the following
 import numpy as np
 import matplotlib.pyplot as plt
 
-from centrex_TlF_hamiltonian import states, hamiltonian
+from centrex_tlf_hamiltonian import states, hamiltonian
 
 # generate states up to J=6
 QN = states.generate_uncoupled_states_ground(Js=np.arange(7))

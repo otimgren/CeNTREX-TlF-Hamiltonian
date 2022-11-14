@@ -1,4 +1,4 @@
-from centrex_TlF_hamiltonian.states import CoupledBasisState, State
+from centrex_tlf_hamiltonian.states import CoupledBasisState, State
 
 from ..constants import BConstants
 from ..quantum_operators import J2, J4, J6

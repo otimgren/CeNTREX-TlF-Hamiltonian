@@ -3,7 +3,7 @@ import copy
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian.states.utils_compact import compact_QN_coupled_indices
+from centrex_tlf_hamiltonian.states.utils_compact import compact_QN_coupled_indices
 from scipy import constants as cst
 
 from .find_states import QuantumSelector

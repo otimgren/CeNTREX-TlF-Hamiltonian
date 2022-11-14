@@ -1,5 +1,5 @@
 import numpy as np
-from centrex_TlF_hamiltonian.states import CoupledBasisState, State
+from centrex_tlf_hamiltonian.states import CoupledBasisState, State
 
 from ..constants import BConstants
 from ..wigner import sixj_f, threej_f
@@ -55,9 +55,17 @@ def d_p(psi: CoupledBasisState, p: int, constants: BConstants) -> State:
                     * sixj_f(Jp, F1p, I1, F1, J, 1)
                 )
 
-                basis_state = CoupledBasisState(F, mF, F1, J, I1, I2, Omega=Omega,
-        electronic_state=psi.electronic_state,
-        P=psi.P)
+                basis_state = CoupledBasisState(
+                    F,
+                    mF,
+                    F1,
+                    J,
+                    I1,
+                    I2,
+                    Omega=Omega,
+                    electronic_state=psi.electronic_state,
+                    P=psi.P,
+                )
                 if amp != 0:
                     data.append((amp, basis_state))
 

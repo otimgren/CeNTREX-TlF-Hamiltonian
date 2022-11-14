@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 from scipy.constants import physical_constants
-from centrex_TlF_hamiltonian import states, hamiltonian
-from centrex_TlF_hamiltonian.states.states import ElectronicState
+from centrex_tlf_hamiltonian import states, hamiltonian
+from centrex_tlf_hamiltonian.states.states import ElectronicState
 
 
 def test_gfactor_B_hamiltonian():

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from centrex_TlF_hamiltonian import hamiltonian, states
+from centrex_tlf_hamiltonian import hamiltonian, states
 
 # generate the hyperfine sublevels in J=0 to J=4
 QN = states.generate_coupled_states_excited(Js=np.arange(1, 5), Ps=[1], Omegas=[-1, 1])

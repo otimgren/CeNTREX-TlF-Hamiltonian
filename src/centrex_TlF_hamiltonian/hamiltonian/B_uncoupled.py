@@ -1,5 +1,5 @@
 import numpy as np
-from centrex_TlF_hamiltonian.states import State, UncoupledBasisState
+from centrex_tlf_hamiltonian.states import State, UncoupledBasisState
 
 from .constants import BConstants
 

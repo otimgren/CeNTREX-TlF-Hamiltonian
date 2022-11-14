@@ -2,7 +2,7 @@ from typing import Sequence, Union, Any
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian.states import BasisState
+from centrex_tlf_hamiltonian.states import BasisState
 
 __all__ = ["generate_transform_matrix"]
 

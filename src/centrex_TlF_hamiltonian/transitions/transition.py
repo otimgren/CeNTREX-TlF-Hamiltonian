@@ -1,4 +1,4 @@
-import centrex_TlF_hamiltonian.states as states
+import centrex_tlf_hamiltonian.states as states
 from enum import IntEnum
 from typing import Sequence
 from dataclasses import dataclass

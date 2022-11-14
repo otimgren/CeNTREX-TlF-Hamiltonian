@@ -3,7 +3,7 @@ from typing import Tuple, List, Optional, Sequence
 import numpy as np
 import numpy.typing as npt
 
-from centrex_TlF_hamiltonian.states import State, BasisState
+from centrex_tlf_hamiltonian.states import State, BasisState
 
 __all__ = ["reorder_evecs", "matrix_to_states", "reduced_basis_hamiltonian"]
 

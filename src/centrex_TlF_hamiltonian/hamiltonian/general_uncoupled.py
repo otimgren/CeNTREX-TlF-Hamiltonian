@@ -1,6 +1,6 @@
 from .constants import HamiltonianConstants
 from .quantum_operators import J2
-from centrex_TlF_hamiltonian.states import State, UncoupledBasisState
+from centrex_tlf_hamiltonian.states import State, UncoupledBasisState
 
 __all__ = ["Hrot"]
 

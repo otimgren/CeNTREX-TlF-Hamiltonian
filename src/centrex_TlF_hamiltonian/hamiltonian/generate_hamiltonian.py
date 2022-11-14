@@ -5,7 +5,7 @@ from typing import Callable, Sequence, Any, Union, List
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian.states import CoupledBasisState, UncoupledBasisState, Basis
+from centrex_tlf_hamiltonian.states import CoupledBasisState, UncoupledBasisState, Basis
 
 from . import B_coupled, X_uncoupled, B_coupled_Omega
 from .constants import BConstants, HamiltonianConstants, XConstants

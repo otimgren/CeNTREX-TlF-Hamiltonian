@@ -1,4 +1,4 @@
-from centrex_TlF_hamiltonian import states, hamiltonian
+from centrex_tlf_hamiltonian import states, hamiltonian
 
 # generate the hyperfine sublevels in J=0 and J=1
 QN = states.generate_uncoupled_states_ground(Js=[0, 1])

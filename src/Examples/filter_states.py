@@ -1,4 +1,4 @@
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 
 QN = states.generate_uncoupled_states_ground(Js=[0, 1])
 

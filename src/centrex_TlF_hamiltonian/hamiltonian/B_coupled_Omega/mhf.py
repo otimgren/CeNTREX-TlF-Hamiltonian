@@ -1,5 +1,5 @@
 import numpy as np
-from centrex_TlF_hamiltonian.states import CoupledBasisState, State
+from centrex_tlf_hamiltonian.states import CoupledBasisState, State
 
 from ..constants import BConstants
 from ..wigner import sixj_f, threej_f
