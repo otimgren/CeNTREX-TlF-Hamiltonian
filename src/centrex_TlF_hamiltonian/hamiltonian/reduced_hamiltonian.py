@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Sequence, Tuple, Union
 
-# this causes a dependency on couplings, which itself has a dependency on states and
-# hamiltonians
-import centrex_TlF_couplings as couplings
+from centrex_TlF_hamiltonian.states import MicrowaveTransition, OpticalTransition
 import numpy as np
 import numpy.typing as npt
 from centrex_TlF_hamiltonian.states import (
@@ -378,9 +376,7 @@ def generate_total_reduced_hamiltonian(
 
 
 def generate_reduced_hamiltonian_transitions(
-    transitions: Sequence[
-        Union[couplings.OpticalTransition, couplings.MicrowaveTransition]
-    ],
+    transitions: Sequence[Union[OpticalTransition, MicrowaveTransition]],
     E: npt.NDArray[np.float64] = np.array([0.0, 0.0, 0.0]),
     B: npt.NDArray[np.float64] = np.array([0.0, 0.0, 1e-6]),
     rtol: Optional[float] = None,
@@ -397,7 +393,7 @@ def generate_reduced_hamiltonian_transitions(
     excited_states_selectors = []
 
     for transition in transitions:
-        if isinstance(transition, couplings.OpticalTransition):
+        if isinstance(transition, OpticalTransition):
             excited_states_approx_qn_select = transition.qn_select_excited
             excited_states_approx = list(
                 generate_coupled_states_B(excited_states_approx_qn_select)
@@ -420,13 +416,15 @@ def generate_reduced_hamiltonian_transitions(
             Js_excited: npt.NDArray[np.int_] = np.unique(
                 [s.J for es in excited_states for a, s in es]
             )
-            Js_ground = list(np.arange(Js_excited.min() - 1, Js_excited.max() + 2).astype(int))
+            Js_ground = list(
+                np.arange(Js_excited.min() - 1, Js_excited.max() + 2).astype(int)
+            )
             Js_ground = [J for J in Js_ground if (-1) ** J == transition.P_ground]
 
             _J_ground.extend(Js_ground)
             excited_states_selectors.append(excited_states_approx_qn_select)
 
-        if isinstance(transition, couplings.MicrowaveTransition):
+        if isinstance(transition, MicrowaveTransition):
             _J_ground.extend([transition.J_ground, transition.J_excited])
 
     # removing duplicates
