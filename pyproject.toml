@@ -4,6 +4,9 @@ version = "0.2.0"
 description = "Code for calculating the TlF Hamiltonian"
 authors = ["Olivier Grasdijk <jgrasdijk@anl.gov>"]
 license = "MIT"
+packages = [
+    { include = "centrex_tlf_hamiltonian", from="src"},
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
