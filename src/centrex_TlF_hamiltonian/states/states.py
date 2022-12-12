@@ -5,7 +5,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional, Union, Sequence, List, Any, Tuple
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -81,10 +81,7 @@ class CoupledBasisState(BasisState):
             self.Ω = self.Omega
         else:
             raise AssertionError("need to supply either Omega or Ω")
-        if P is not None:
-            self.P = P
-        else:
-            raise AssertionError("need to supply parity P")
+        self.P = P
         self.electronic_state = electronic_state
         self.energy = energy
         self.isCoupled = True
@@ -336,10 +333,7 @@ class UncoupledBasisState(BasisState):
         self.I1, self.m1 = I1, m1
         self.I2, self.m2 = I2, m2
         self.Omega = Omega
-        if P is not None:
-            self.P = P
-        else:
-            raise AssertionError("need to supply parity P")
+        self.P = P
         self.electronic_state = electronic_state
         self.isCoupled = False
         self.isUncoupled = True
@@ -669,7 +663,17 @@ class State:
     # def __len__(self):
     #     return len(self.data)
 
-    def __repr__(self) -> str:
+    
+    def state_string(self, digits: int = 2):
+        """
+        Returns a string representing the state.
+
+        inputs:
+        digits : number of significant digits in amplitudes
+
+        outputs:
+        string : string representing self
+        """
         ordered = self.order_by_amp()
         idx = 0
         string = ""
@@ -677,7 +681,7 @@ class State:
         for amp, state in ordered:
             if np.abs(amp) < amp_max * 1e-2:
                 continue
-            string += f"{amp:.2f} x {state}"
+            string += f"{amp:.{digits}f} x {state}"
             idx += 1
             if (idx > 4) or (idx == len(ordered.data)):
                 break
@@ -686,6 +690,9 @@ class State:
             return ""
         else:
             return string
+
+    def __repr__(self) -> str:
+        self.state_string()
 
     @property
     def largest(self) -> BasisState:
