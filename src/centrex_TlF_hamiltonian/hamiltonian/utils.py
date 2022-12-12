@@ -5,7 +5,7 @@ import numpy.typing as npt
 
 from centrex_TlF_hamiltonian.states import State, BasisState
 
-__all__ = ["reorder_evecs", "matrix_to_states", "reduced_basis_hamiltonian"]
+__all__ = ["reorder_evecs", "matrix_to_states", "reduced_basis_hamiltonian", "vector_to_state"]
 
 
 def reorder_evecs(
@@ -72,7 +72,7 @@ def matrix_to_states(
             data.append((amp, QN[j]))
 
         # store the state in the list
-        state = State(data)
+        state = State(data=data)
 
         if E is not None:
             state.energy = E[i]
@@ -81,6 +81,38 @@ def matrix_to_states(
 
     # return the list of states
     return eigenstates
+
+def vector_to_state(
+    V: npt.NDArray[np.complex_], QN: Sequence[BasisState], E: Optional[List] = None
+) -> State:
+    """Turn a vector into a  state object
+    QN is in the basis the diagonal Hamiltonian H was formed from corresponding to the
+    eigenvectors V.
+
+    Args:
+        V (npt.NDArray[np.complex_]): array with columns corresponding to eigenvectors
+        QN (Sequence[BasisState]): list of State objects
+        E (List, optional): list of energies corresponding to the states.
+                            Defaults to None.
+
+    Returns:
+        Sequence[State]: list of eigenstates expressed as State objects
+    """
+
+    # initialize a list for storing eigenstates
+    state_vector = V
+
+    # ensure that largest component has positive sign
+    index = np.argmax(np.abs(state_vector))
+    state_vector = state_vector * np.sign(state_vector[index])
+
+    data = []
+    # get data in correct format for initializing state object
+    for j, amp in enumerate(state_vector):
+        data.append((amp, QN[j]))
+
+    state = State(data)
+    return state
 
 
 def reduced_basis_hamiltonian(
