@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from itertools import product
-from typing import Any, List, Optional, Sequence, Union, no_type_check, Callable
+from typing import (Any, Callable, List, Optional, Sequence, Union,
+                    no_type_check)
 
 import numpy as np
 import numpy.typing as npt
 
 from .states import BasisState, CoupledBasisState, ElectronicState, State
 from .utils import reorder_evecs
-
 
 __all__ = [
     "QuantumSelector",
@@ -202,7 +202,6 @@ def find_exact_states_indices(
 
 def find_exact_states(
     states_approx: Sequence[State],
-    QN_approx: Sequence[State],
     QN: Sequence[State],
     H: Optional[npt.NDArray[np.complex128]] = None,
     V: Optional[npt.NDArray[np.complex128]] = None,
@@ -212,7 +211,6 @@ def find_exact_states(
 
     Args:
         states_approx (list): list of State objects to find the closest match to
-        QN_approx (list): list of State objects from which H was constructed
         QN (list): list of State objects defining the basis for H
         H (np.ndarray): Hamiltonian, diagonal in basis QN
         V (np.ndarray): eigenvectors in basis QN
@@ -221,7 +219,7 @@ def find_exact_states(
         list: list of eigenstates of H closest to states_approx
     """
 
-    indices = find_exact_states_indices(states_approx, QN_approx, H, V, V_ref)
+    indices = find_exact_states_indices(states_approx, QN, H, V, V_ref)
     return [QN[idx] for idx in indices]
 
 
